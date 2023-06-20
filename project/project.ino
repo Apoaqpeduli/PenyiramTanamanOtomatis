@@ -2,8 +2,8 @@
 //jika menggunakan esp32
 //#include <WiFi.h>
 //jika menggunakan esp8266
-#include <ESP8266WiFi.h>
 
+#include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>
 #include <UniversalTelegramBot.h>
 
@@ -21,6 +21,7 @@ const unsigned long BOT_MTBS = 1000; // mean time between scan messages
 int moistureValue;
 String chatId;
 
+X509List cert(TELEGRAM_CERTIFICATE_ROOT);
 WiFiClientSecure secured_client;
 UniversalTelegramBot bot(BOT_TOKEN, secured_client);
 unsigned long bot_lasttime;
@@ -79,7 +80,7 @@ void setup() {
   Serial.print("Connecting to Wifi SSID ");
   Serial.print(WIFI_SSID);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  secured_client.setCACert(TELEGRAM_CERTIFICATE_ROOT); // Add root certificate for api.telegram.org
+  secured_client.setTrustAnchors(&cert); // Add root certificate for api.telegram.org
   while (WiFi.status() != WL_CONNECTED)
   {
     Serial.print(".");

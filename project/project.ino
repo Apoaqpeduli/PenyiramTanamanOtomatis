@@ -6,6 +6,7 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>
 #include <UniversalTelegramBot.h>
+#include <ArduinoJson.h>
 
 // Wi-Fi configuration
 #define WIFI_SSID "asdasd123"
@@ -76,11 +77,13 @@ void handleNewMessages(int numNewMessages)
 void setup() {
   Serial.begin(115200);
   Serial.println();
-
+  
+  configTime(0, 0, "pool.ntp.org");
+  secured_client.setTrustAnchors(&cert); // Add root certificate for api.telegram.org
+  
   Serial.print("Connecting to Wifi SSID ");
   Serial.print(WIFI_SSID);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  secured_client.setTrustAnchors(&cert); // Add root certificate for api.telegram.org
   while (WiFi.status() != WL_CONNECTED)
   {
     Serial.print(".");

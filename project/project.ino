@@ -9,8 +9,8 @@
 #include <ArduinoJson.h>
 
 // Wi-Fi configuration
-#define WIFI_SSID "asdasd123"
-#define WIFI_PASSWORD "asdasd123"
+#define WIFI_SSID "turbin ulir"
+#define WIFI_PASSWORD "turbin ulir"
 #define BOT_TOKEN "6242609061:AAEMRqTuNYfCiIBfDP4UU3SKhMkK8kmiW5I"
 
 const int moisturePin = A0;
@@ -59,15 +59,15 @@ void handleNewMessages(int numNewMessages)
       bot.sendMessage(chat_id, welcome);
     }
 
-    if (text == "/status") {
+    else if (text == "/status") {
       sendTelegramStatus(moistureValue);
     }
 
-    if (text == "/on_pompa") {
+    else if (text == "/on_pompa") {
       digitalWrite(pumpPin, LOW);
     }
 
-    if (text == "/off_pompa") {
+    else if (text == "/off_pompa") {
       digitalWrite(pumpPin, HIGH);
     }
 
@@ -78,7 +78,6 @@ void setup() {
   Serial.begin(115200);
   Serial.println();
   
-  configTime(0, 0, "pool.ntp.org");
   secured_client.setTrustAnchors(&cert); // Add root certificate for api.telegram.org
   
   Serial.print("Connecting to Wifi SSID ");
@@ -91,6 +90,15 @@ void setup() {
   }
   Serial.print("\nWiFi connected. IP address: ");
   Serial.println(WiFi.localIP());
+  configTime(0, 0, "pool.ntp.org");
+  time_t now = time(nullptr);
+  while (now < 24 * 3600)
+  {
+    Serial.print(".");
+    delay(100);
+    now = time(nullptr);
+  }
+  Serial.println(now);
 
 }
 
@@ -106,7 +114,7 @@ void loop() {
     Serial.println("Moisture level: Dry");
     sendTelegramMessage("Moisture level: Dry");
   }
-  delay(stabilityDelay);  // Delay for sensor stability
+  //delay(stabilityDelay);  // Delay for sensor stability
 
 
   if (millis() - bot_lasttime > BOT_MTBS)

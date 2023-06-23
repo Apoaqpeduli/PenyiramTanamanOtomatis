@@ -3,18 +3,20 @@
 //#include <WiFi.h>
 //jika menggunakan esp8266
 
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>
 #include <UniversalTelegramBot.h>
 #include <ArduinoJson.h>
 
 // Wi-Fi configuration
-#define WIFI_SSID "turbin ulir"
-#define WIFI_PASSWORD "turbin ulir"
-#define BOT_TOKEN "6242609061:AAEMRqTuNYfCiIBfDP4UU3SKhMkK8kmiW5I"
+#define WIFI_SSID "mama"
+#define WIFI_PASSWORD "mama1234"
+#define BOT_TOKEN "6215118145:AAGMI-5kmEwlU2ZpM9e2gFBqB1tH7XxXH1E"
 
 const int moisturePin = A0;
-const int pumpPin = 27;
+const int pumpPin = D5;
 const int dryThreshold = 300;  // Dry threshold value
 const int wetThreshold = 500;  // Wet threshold value
 const int stabilityDelay = 2000;  // Stability delay for sensor (in milliseconds)
@@ -26,6 +28,8 @@ X509List cert(TELEGRAM_CERTIFICATE_ROOT);
 WiFiClientSecure secured_client;
 UniversalTelegramBot bot(BOT_TOKEN, secured_client);
 unsigned long bot_lasttime;
+
+LiquidCrystal_I2C lcd(0x27, 16, 2); 
 
 void handleNewMessages(int numNewMessages)
 {
@@ -59,15 +63,21 @@ void handleNewMessages(int numNewMessages)
       bot.sendMessage(chat_id, welcome);
     }
 
-    else if (text == "/status") {
+    else if (text == "/check_pH") {
+      String response = "Kelembaban saat ini: ";
+      bot.sendMessage(chat_id, response);
       sendTelegramStatus(moistureValue);
     }
 
     else if (text == "/on_pompa") {
       digitalWrite(pumpPin, LOW);
+      String response = "Pump turned on. Tanaman disiram.";
+      digitalWrite(pumpPin, LOW);
     }
 
     else if (text == "/off_pompa") {
+      digitalWrite(pumpPin, HIGH);
+      String response = "Pump turned off. Tanaman selesai disiram.";
       digitalWrite(pumpPin, HIGH);
     }
 
@@ -100,19 +110,38 @@ void setup() {
   }
   Serial.println(now);
 
+  //check inisialisai dilaptop saya bisa pakek init
+  lcd.init(); 
+  //lcd.begin();
+  lcd.backlight();   // Enable the backlight
+  lcd.setCursor(0, 0);
+  lcd.print("Test");
+  lcd.setCursor(0, 1);
+  lcd.print("Asd");
+
+
 }
 
 void loop() {
    moistureValue = analogRead(moisturePin);
 
-  if (moistureValue <= wetThreshold) {
-    digitalWrite(pumpPin, LOW);  // Turn off the pump
-    Serial.println("Moisture level: Wet");
-    sendTelegramMessage("Moisture level: Wet");
-  } else if (moistureValue >= dryThreshold) {
-    digitalWrite(pumpPin, HIGH);  // Turn on the pump
-    Serial.println("Moisture level: Dry");
-    sendTelegramMessage("Moisture level: Dry");
+  if (moistureValue >= wetThreshold) {
+    lcd.setCursor(0, 0);
+    lcd.print("Tanah Basah"+ String(moistureValue));
+    lcd.setCursor(0, 1);
+    lcd.print("Pump Off " );
+    sendTelegramStatus(moistureValue);
+  } else if (moistureValue <= dryThreshold) {
+    lcd.setCursor(0, 0);
+    lcd.print("Tanah Kering  " );
+    lcd.setCursor(0, 1);
+    lcd.print("Pump ON " + String(moistureValue));
+    sendTelegramStatus(moistureValue);
+  } else {
+    lcd.setCursor(0, 0);
+    lcd.print("Kelembaban Tanah ");
+    lcd.setCursor(0, 1);
+    lcd.print("Saat ini: " + String(moistureValue));
   }
   //delay(stabilityDelay);  // Delay for sensor stability
 

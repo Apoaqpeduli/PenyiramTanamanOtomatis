@@ -5,8 +5,8 @@
 #include <UniversalTelegramBot.h>
 #include <ArduinoJson.h>
 
-#define WIFI_SSID "HUAWEI-76Cq"
-#define WIFI_PASSWORD "kn7h39Vd"
+#define ssid "HUAWEI-76Cq"
+#define pass "kn7h39Vd"
 #define BOT_TOKEN "6242609061:AAEMRqTuNYfCiIBfDP4UU3SKhMkK8kmiW5I"
 
 
@@ -25,8 +25,7 @@ int valuePompa;
 int dryThreshold = 300;
 int wetThreshold = 500;
 
-#define ssid "HUAWEI-76Cq"
-#define pass "kn7h39Vd"
+
 
 const unsigned long BOT_MTBS = 1000; // mean time between scan messages
 String chatId;

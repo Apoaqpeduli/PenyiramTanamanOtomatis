@@ -103,7 +103,7 @@ void loop() {
     lcd.print("Saat ini: " + String(valueSensor));
     digitalWrite(pinPompa, LOW);
   }
-  lcd.clear();
+  
   if(cnt==timernotif){
     sendTelegramStatus(valueSensor);
     Serial.println("kirim notif");

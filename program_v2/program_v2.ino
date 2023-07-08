@@ -87,6 +87,7 @@ void loop() {
     lcd.print("Tanah Basah"+ String(valueSensor));
     lcd.setCursor(0, 1);
     lcd.print("Pump Off " );
+    Serial.println("basah");
     digitalWrite(pinPompa, LOW);
 
   } else if (valueSensor <= dryThreshold) {
@@ -94,6 +95,7 @@ void loop() {
     lcd.print("Tanah Kering  " );
     lcd.setCursor(0, 1);
     lcd.print("Pump ON " + String(valueSensor));
+    Serial.println("kering");
     digitalWrite(pinPompa, HIGH);
    
   } else {

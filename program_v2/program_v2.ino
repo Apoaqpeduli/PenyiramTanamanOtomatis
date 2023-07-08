@@ -82,31 +82,10 @@ void setup() {
 void loop() {
   valueSensor = analogRead(pinSensor);
   Serial.println(valueSensor);
-  if (valueSensor >= wetThreshold) {
-    lcd.setCursor(0, 0);
-    lcd.print("Tanah Basah");
-    lcd.setCursor(0, 1);
-    lcd.print("Pump Off " + String(valueSensor));
-    Serial.println("basah");
-    digitalWrite(pinPompa, LOW);
-
-  } else if (valueSensor <= dryThreshold) {
-    lcd.setCursor(0, 0);
-    lcd.print("Tanah Kering  " );
-    lcd.setCursor(0, 1);
-    lcd.print("Pump ON " + String(valueSensor));
-    Serial.println("kering");
-    digitalWrite(pinPompa, HIGH);
-
-  } else {
-    lcd.setCursor(0, 0);
-    lcd.print("Kelembaban Tanah ");
-    lcd.setCursor(0, 1);
-    lcd.print("Saat ini: " + String(valueSensor));
-    digitalWrite(pinPompa, LOW);
-  }
+  update_lcd();;
 
   if (cnt == timernotif) {
+    update_lcd();
     sendTelegramStatus(valueSensor);
     Serial.println("kirim notif");
     cnt = 0;
@@ -118,6 +97,7 @@ void loop() {
 
   if (millis() - bot_lasttime > BOT_MTBS)
   {
+    update_lcd();
     int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
     while (numNewMessages)
     {
@@ -192,4 +172,30 @@ void sendTelegramStatus(int moistureValue) {
 
 bool sendTelegramMessage(String message) {
   return bot.sendMessage(chatId, message);
+}
+
+void update_lcd(){
+  if (valueSensor >= wetThreshold) {
+    lcd.setCursor(0, 0);
+    lcd.print("Tanah Basah");
+    lcd.setCursor(0, 1);
+    lcd.print("Pump Off " + String(valueSensor));
+    Serial.println("basah");
+    digitalWrite(pinPompa, LOW);
+
+  } else if (valueSensor <= dryThreshold) {
+    lcd.setCursor(0, 0);
+    lcd.print("Tanah Kering  " );
+    lcd.setCursor(0, 1);
+    lcd.print("Pump ON " + String(valueSensor));
+    Serial.println("kering");
+    digitalWrite(pinPompa, HIGH);
+
+  } else {
+    lcd.setCursor(0, 0);
+    lcd.print("Kelembaban Tanah ");
+    lcd.setCursor(0, 1);
+    lcd.print("Saat ini: " + String(valueSensor));
+    digitalWrite(pinPompa, LOW);
+  }
 }

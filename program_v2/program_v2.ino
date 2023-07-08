@@ -84,9 +84,9 @@ void loop() {
   Serial.println(valueSensor);
   if (valueSensor >= wetThreshold) {
     lcd.setCursor(0, 0);
-    lcd.print("Tanah Basah"+ String(valueSensor));
+    lcd.print("Tanah Basah");
     lcd.setCursor(0, 1);
-    lcd.print("Pump Off " );
+    lcd.print("Pump Off " + String(valueSensor));
     Serial.println("basah");
     digitalWrite(pinPompa, LOW);
 

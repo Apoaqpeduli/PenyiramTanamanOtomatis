@@ -32,8 +32,8 @@ String chatId;
 
 String keadaan;
 
-int cnt=0;
-int timernotif=5; //satuan detik
+int cnt = 0;
+int timernotif = 5; //satuan detik
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
@@ -42,7 +42,7 @@ void setup() {
   Serial.begin(9600);
   //inisialisasi relay sebagai output
   pinMode(pinPompa, OUTPUT);
-  digitalWrite(pinPompa,LOW);
+  digitalWrite(pinPompa, LOW);
   //inisialisasi telegram
   secured_client.setTrustAnchors(&cert);
   //connect wifi
@@ -56,7 +56,7 @@ void setup() {
   lcd.print("nama");
   lcd.setCursor(0, 1);
   lcd.print("nim");
-  
+
   while (WiFi.status() != WL_CONNECTED)
   {
     Serial.print(".");
@@ -74,8 +74,8 @@ void setup() {
     now = time(nullptr);
   }
   Serial.println(now);
-  digitalWrite(pinPompa,LOW);
-  
+  digitalWrite(pinPompa, LOW);
+
   delay(2000);
 }
 
@@ -97,7 +97,7 @@ void loop() {
     lcd.print("Pump ON " + String(valueSensor));
     Serial.println("kering");
     digitalWrite(pinPompa, HIGH);
-   
+
   } else {
     lcd.setCursor(0, 0);
     lcd.print("Kelembaban Tanah ");
@@ -105,12 +105,17 @@ void loop() {
     lcd.print("Saat ini: " + String(valueSensor));
     digitalWrite(pinPompa, LOW);
   }
-  
-  if(cnt==timernotif){
+
+  if (cnt == timernotif) {
     sendTelegramStatus(valueSensor);
     Serial.println("kirim notif");
-    cnt=0;
+    cnt = 0;
   }
+  lcd.setCursor(0, 0);
+  lcd.print("               ");
+  lcd.setCursor(0, 1);
+  lcd.print("                ");
+
   if (millis() - bot_lasttime > BOT_MTBS)
   {
     int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
@@ -122,7 +127,7 @@ void loop() {
     }
     Serial.print("detik ke :");
     Serial.println(cnt);
-    
+
     cnt++;
     bot_lasttime = millis();
   }
